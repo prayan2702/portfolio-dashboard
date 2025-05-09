@@ -12,12 +12,32 @@ if uploaded_file:
 
     # Clean & filter
     df = df[df["Symbol"].notna()]
-    df["Investment"] = df["Investment"].astype(str).str.replace(",", "").astype(float)
-    df["Current Value"] = df["Current Value"].astype(str).str.replace(",", "").astype(float)
-    df["Current Gain"] = df["Current Gain"].astype(str).str.replace(",", "").astype(float)
-    df["Gain%"] = df["Gain%"].astype(str).str.replace("%", "").astype(float)
-    df["Position Size"] = df["Position Size"].astype(str).str.replace("%", "").astype(float)
-
+    
+    # Convert to float safely (handle commas and blanks)
+    for col in ["Investment", "Current Value", "Current Gain"]:
+        df[col] = (
+            df[col]
+            .astype(str)
+            .str.replace(",", "")
+            .replace("", "0")
+            .astype(float)
+        )
+    
+    df["Gain%"] = (
+        df["Gain%"]
+        .astype(str)
+        .str.replace("%", "")
+        .replace("", "0")
+        .astype(float)
+    )
+    
+    df["Position Size"] = (
+        df["Position Size"]
+        .astype(str)
+        .str.replace("%", "")
+        .replace("", "0")
+        .astype(float)
+    )
     # KPIs
     total_investment = df["Investment"].sum()
     total_current_value = df["Current Value"].sum()
